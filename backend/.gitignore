@@ -1,0 +1,22 @@
+## .NET
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+**/bin/
+**/obj/
+**/.vs/
+_ReSharper*/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.user
+*.suo
+*.userprefs
+appsettings.Development.json
+*.db
+*.sqlite
+
+# Migrations (keep these in source control usually, but listing for reference)
+# **/Migrations/

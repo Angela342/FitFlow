@@ -1,0 +1,23 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "@/styles/globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "FitFlow — Effortless Booking for Your Studio",
+  description:
+    "Manage classes, clients, and bookings all in one place. Built for Pilates, yoga, and wellness studios.",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>{children}</body>
+    </html>
+  );
+}
