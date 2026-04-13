@@ -25,6 +25,12 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PasswordHash).IsRequired();
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Role)
+                  .HasConversion<string>()
+                  .HasMaxLength(20)
+                  .IsRequired();
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
         });
 
         // Workout

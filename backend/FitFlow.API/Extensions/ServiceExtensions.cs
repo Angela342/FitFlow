@@ -3,6 +3,7 @@ using FitFlow.Application.Interfaces;
 using FitFlow.Application.Services;
 using FitFlow.Infrastructure.Data;
 using FitFlow.Infrastructure.Repositories;
+using FitFlow.Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,8 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkoutService, WorkoutService>();
         services.AddScoped<INutritionService, NutritionService>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         return services;
     }
 
@@ -26,7 +29,7 @@ public static class ServiceExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkoutRepository, WorkoutRepository>();

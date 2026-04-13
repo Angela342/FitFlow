@@ -2,6 +2,8 @@ using FitFlow.API.Extensions;
 using FitFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
+AppContext.SetSwitch("System.Net.DisableIPv6", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
