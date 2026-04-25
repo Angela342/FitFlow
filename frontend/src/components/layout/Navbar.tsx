@@ -36,24 +36,31 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           {isAuthenticated && (
             <>
-              <Link
-                href="/dashboard"
-                className="text-sm text-gray-500 hover:text-gray-800 transition"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/workouts"
-                className="text-sm text-gray-500 hover:text-gray-800 transition"
-              >
-                Workouts
-              </Link>
-              <Link
-                href="/nutrition"
-                className="text-sm text-gray-500 hover:text-gray-800 transition"
-              >
-                Nutrition
-              </Link>
+              {user?.role === "Admin" ? (
+                <>
+                  <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Dashboard
+                  </Link>
+                  <Link href="/dashboard/classes" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Classes
+                  </Link>
+                  <Link href="/dashboard/schedule" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Schedule
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/classes" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Classes
+                  </Link>
+                  <Link href="/workouts" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Workouts
+                  </Link>
+                  <Link href="/nutrition" className="text-sm text-gray-500 hover:text-gray-800 transition">
+                    Nutrition
+                  </Link>
+                </>
+              )}
             </>
           )}
 

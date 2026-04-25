@@ -14,6 +14,8 @@ public class AppDbContext : DbContext
     public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public DbSet<NutritionLog> NutritionLogs => Set<NutritionLog>();
     public DbSet<Meal> Meals => Set<Meal>();
+    public DbSet<Class> Classes => Set<Class>();
+    public DbSet<ClassSession> ClassSessions => Set<ClassSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,6 +109,35 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.NutritionLog)
                   .WithMany(n => n.Meals)
                   .HasForeignKey(e => e.NutritionLogId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Class
+        modelBuilder.Entity<Class>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Instructor).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ColorLabel).HasMaxLength(20).HasDefaultValue("#f9a8d4");
+            entity.Property(e => e.Category).HasMaxLength(100);
+            entity.Property(e => e.Price).HasPrecision(10, 2);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+        });
+
+        // ClassSession
+        modelBuilder.Entity<ClassSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status)
+                  .HasConversion<string>()
+                  .HasMaxLength(20)
+                  .IsRequired();
+            entity.Property(e => e.Notes).HasMaxLength(500);
+            entity.HasIndex(e => e.StartTime);
+            entity.HasOne(e => e.Class)
+                  .WithMany(c => c.Sessions)
+                  .HasForeignKey(e => e.ClassId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
     }
