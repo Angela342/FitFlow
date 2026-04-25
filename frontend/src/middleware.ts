@@ -1,24 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_PATHS = ["/auth/login", "/auth/register"];
+// Routes that should redirect to home if the user is already logged in
+const AUTH_ROUTES = ["/auth/login", "/auth/register"];
+
+// Routes that require any authenticated user
+const PROTECTED_ROUTES = ["/workouts", "/nutrition"];
+
+// Routes that require the Admin role
+const ADMIN_ROUTES = ["/dashboard"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const token = request.cookies.get("fitflow_token")?.value;
 
-  // Allow public auth routes
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  const isAuthed = Boolean(token);
+
+  // If logged in, redirect away from auth pages
+  if (AUTH_ROUTES.some((p) => pathname.startsWith(p))) {
+    if (isAuthed) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
     return NextResponse.next();
   }
 
-  // Check for token in cookies (set by the auth store on login)
-  const token = request.cookies.get("token")?.value;
+  // Protected routes — must be logged in
+  if (PROTECTED_ROUTES.some((p) => pathname.startsWith(p))) {
+    if (!isAuthed) {
+      const loginUrl = new URL("/auth/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
+  }
 
-  // If no token and trying to access a protected route, redirect to login
-  // Note: token is in localStorage (client-side), so middleware uses a cookie
-  // we set alongside. If not present, we let the client-side AuthProvider handle
-  // the redirect for now — this provides edge-case protection.
-  if (!token && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+  // Admin routes — must be logged in (role checked client-side)
+  // We redirect unauthenticated users here; role check is done in AdminRoute
+  if (ADMIN_ROUTES.some((p) => pathname.startsWith(p))) {
+    if (!isAuthed) {
+      const loginUrl = new URL("/auth/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+    return NextResponse.next();
   }
 
   return NextResponse.next();

@@ -4,6 +4,7 @@ using FitFlow.Application.Services;
 using FitFlow.Infrastructure.Data;
 using FitFlow.Infrastructure.Repositories;
 using FitFlow.Infrastructure.Security;
+using FitFlow.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,8 +20,13 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWorkoutService, WorkoutService>();
         services.AddScoped<INutritionService, NutritionService>();
+        services.AddScoped<IStudioService, StudioService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ISmsService, SmsService>();
+        services.AddHttpClient("Resend");
+        services.AddHttpClient("Twilio");
         return services;
     }
 
@@ -34,6 +40,8 @@ public static class ServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWorkoutRepository, WorkoutRepository>();
         services.AddScoped<INutritionRepository, NutritionRepository>();
+        services.AddScoped<IStudioRepository, StudioRepository>();
+        services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
 
         return services;
     }

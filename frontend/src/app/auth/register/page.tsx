@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -61,7 +61,23 @@ function getPasswordStrength(password: string): StrengthResult {
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { setAuth } = useAuthStore();
+  useAuthStore(); // keep store available for redirect-if-authenticated check
+
+  // Redirect-if-already-authenticated: runs once on mount only
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const userRaw = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+    if (token && userRaw) {
+      try {
+        const user = JSON.parse(userRaw);
+        router.replace(user.role === "Admin" ? "/dashboard" : "/");
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally runs once on mount only
 
   const [form, setForm] = useState({
     name: "",
@@ -82,6 +98,7 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,18 +123,10 @@ export default function RegisterPage() {
         phone: form.phone || undefined,
       });
 
-      setAuth(
-        {
-          id: data.userId,
-          name: data.name,
-          email: data.email,
-          role: data.role,
-          createdAt: new Date().toISOString(),
-        },
-        data.token
+      // Registration now requires email verification before issuing a token
+      router.push(
+        `/auth/verify?email=${encodeURIComponent(data.email)}&purpose=register`
       );
-
-      router.push("/");
     } catch (err: unknown) {
       const message =
         (err as { response?: { data?: { message?: string } } })?.response?.data

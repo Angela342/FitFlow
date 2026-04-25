@@ -10,6 +10,7 @@ public class User : BaseEntity
     public string? Phone { get; set; }
     public UserRole Role { get; set; } = UserRole.Client;
     public bool IsActive { get; set; } = true;
+    public bool IsEmailVerified { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiry { get; set; }
     public string? ProfileImageUrl { get; set; }

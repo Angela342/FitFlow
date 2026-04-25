@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Calendar,
   Globe,
@@ -22,7 +23,9 @@ import {
   Facebook,
   LayoutGrid,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
+import { useAuthStore } from "@/store/authStore";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -97,6 +100,23 @@ const STEPS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const { user, isAuthenticated, clearAuth } = useAuthStore();
+
+  const handleLogout = () => {
+    clearAuth();
+    router.push("/auth/login");
+  };
+
+  // Derive initials for avatar
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .slice(0, 2)
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+    : "";
 
   return (
     <nav className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
@@ -122,19 +142,56 @@ function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="/auth/login"
-            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Log In
-          </Link>
-          <Link
-            href="/auth/register"
-            className="rounded-full px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: "#D4698A" }}
-          >
-            Get Started
-          </Link>
+          {isAuthenticated && user ? (
+            <>
+              {user.role === "Admin" && (
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              )}
+              {/* Avatar + name */}
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #fb7185 0%, #c084fc 100%)",
+                  }}
+                >
+                  {initials}
+                </div>
+                <span className="text-sm font-medium text-gray-700">
+                  {user.name}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 rounded-full border border-gray-200 px-4 py-1.5 text-sm text-gray-600 transition hover:border-rose-200 hover:text-rose-500"
+              >
+                <LogOut size={14} />
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/auth/login"
+                className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/auth/register"
+                className="rounded-full px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+                style={{ backgroundColor: "#D4698A" }}
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -161,16 +218,54 @@ function Navbar() {
             </Link>
           ))}
           <div className="flex flex-col gap-3 pt-2 border-t border-gray-100">
-            <Link href="/auth/login" className="text-sm text-gray-600">
-              Log In
-            </Link>
-            <Link
-              href="/auth/register"
-              className="rounded-full px-5 py-2 text-sm font-medium text-white text-center"
-              style={{ backgroundColor: "#D4698A" }}
-            >
-              Get Started
-            </Link>
+            {isAuthenticated && user ? (
+              <>
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #fb7185 0%, #c084fc 100%)",
+                    }}
+                  >
+                    {initials}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {user.name}
+                  </span>
+                </div>
+                {user.role === "Admin" && (
+                  <Link
+                    href="/dashboard"
+                    className="text-sm text-gray-600"
+                    onClick={() => setOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                <button
+                  onClick={() => { setOpen(false); handleLogout(); }}
+                  className="flex items-center gap-2 text-sm text-rose-500"
+                >
+                  <LogOut size={14} />
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="text-sm text-gray-600" onClick={() => setOpen(false)}>
+                  Log In
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="rounded-full px-5 py-2 text-sm font-medium text-white text-center"
+                  style={{ backgroundColor: "#D4698A" }}
+                  onClick={() => setOpen(false)}
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
