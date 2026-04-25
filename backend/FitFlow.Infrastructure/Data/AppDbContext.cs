@@ -8,6 +8,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Studio> Studios => Set<Studio>();
+    public DbSet<VerificationCode> VerificationCodes => Set<VerificationCode>();
     public DbSet<Workout> Workouts => Set<Workout>();
     public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public DbSet<NutritionLog> NutritionLogs => Set<NutritionLog>();
@@ -17,6 +19,18 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Studio
+        modelBuilder.Entity<Studio>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.Website).HasMaxLength(500);
+        });
+
         // User
         modelBuilder.Entity<User>(entity =>
         {
@@ -25,6 +39,23 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PasswordHash).IsRequired();
+            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Role)
+                  .HasConversion<string>()
+                  .HasMaxLength(20)
+                  .IsRequired();
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IsEmailVerified).HasDefaultValue(false);
+        });
+
+        // VerificationCode
+        modelBuilder.Entity<VerificationCode>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.Code).IsRequired().HasMaxLength(6);
+            entity.Property(e => e.Purpose).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.HasIndex(e => new { e.Email, e.Purpose });
         });
 
         // Workout

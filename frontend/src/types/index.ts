@@ -1,7 +1,19 @@
+export interface Studio {
+  id: string;
+  name: string;
+  description?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  logoUrl?: string;
+}
+
 export interface User {
   id: string;
   email: string;
   name: string;
+  role: "Client" | "Admin";
   createdAt: string;
 }
 

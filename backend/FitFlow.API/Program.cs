@@ -2,6 +2,8 @@ using FitFlow.API.Extensions;
 using FitFlow.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
+AppContext.SetSwitch("System.Net.DisableIPv6", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
@@ -25,20 +27,27 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure middleware pipeline
+// CORS must be first so preflight responses include the right headers
+app.UseCors("AllowFrontend");
+
+// Swagger + auto-migrations in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    // Auto-apply migrations in development
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+// Only redirect to HTTPS when a real HTTPS port is available (not in local dev)
+if (!app.Environment.IsDevelopment())
+{
+    // Only add redirect if running behind a proper TLS terminator
+    // Skip it locally — no HTTPS cert is configured
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
