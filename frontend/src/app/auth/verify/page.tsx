@@ -30,7 +30,8 @@ export default function VerifyPage() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    setParams(getParams());
+    const p = getParams();
+    setParams({ email: p.email, purpose: p.purpose as "register" | "reset" });
     // focus first box
     inputRefs.current[0]?.focus();
   }, []);
