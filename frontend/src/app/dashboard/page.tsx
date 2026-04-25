@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { Settings, CalendarDays, BookOpen } from "lucide-react";
 import AdminRoute from "@/components/auth/AdminRoute";
 import Navbar from "@/components/layout/Navbar";
 import api from "@/lib/api";
@@ -72,8 +72,30 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* Quick links */}
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <Link
+              href="/dashboard/classes"
+              className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-rose-200 hover:shadow"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: "#fce7f0" }}>
+                <BookOpen size={18} style={{ color: "#D4698A" }} />
+              </div>
+              <span className="text-sm font-medium text-gray-700">Classes</span>
+            </Link>
+            <Link
+              href="/dashboard/schedule"
+              className="flex items-center gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:border-violet-200 hover:shadow"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: "#f0ebff" }}>
+                <CalendarDays size={18} style={{ color: "#8b5cf6" }} />
+              </div>
+              <span className="text-sm font-medium text-gray-700">Schedule</span>
+            </Link>
+          </div>
+
           {/* Stat cards */}
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { label: "Total Bookings", value: "—" },
               { label: "Active Clients", value: "—" },

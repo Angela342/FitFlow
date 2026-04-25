@@ -21,6 +21,7 @@ public static class ServiceExtensions
         services.AddScoped<IWorkoutService, WorkoutService>();
         services.AddScoped<INutritionService, NutritionService>();
         services.AddScoped<IStudioService, StudioService>();
+        services.AddScoped<IClassService, ClassService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IEmailService, EmailService>();
@@ -42,6 +43,8 @@ public static class ServiceExtensions
         services.AddScoped<INutritionRepository, NutritionRepository>();
         services.AddScoped<IStudioRepository, StudioRepository>();
         services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
+        services.AddScoped<IClassRepository, ClassRepository>();
+        services.AddScoped<IClassSessionRepository, ClassSessionRepository>();
 
         return services;
     }

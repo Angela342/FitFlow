@@ -22,6 +22,102 @@ namespace FitFlow.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FitFlow.Domain.Entities.Class", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ColorLabel")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("#f9a8d4");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("DurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Instructor")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("MaxCapacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Classes");
+                });
+
+            modelBuilder.Entity("FitFlow.Domain.Entities.ClassSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CurrentEnrollment")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("StartTime");
+
+                    b.ToTable("ClassSessions");
+                });
+
             modelBuilder.Entity("FitFlow.Domain.Entities.Meal", b =>
                 {
                     b.Property<Guid>("Id")
@@ -327,6 +423,22 @@ namespace FitFlow.Infrastructure.Migrations
                     b.HasIndex("WorkoutId");
 
                     b.ToTable("WorkoutExercises");
+                });
+
+            modelBuilder.Entity("FitFlow.Domain.Entities.ClassSession", b =>
+                {
+                    b.HasOne("FitFlow.Domain.Entities.Class", "Class")
+                        .WithMany("Sessions")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("FitFlow.Domain.Entities.Class", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("FitFlow.Domain.Entities.Meal", b =>
