@@ -16,8 +16,6 @@ public class ClassService : IClassService
         _sessionRepo = sessionRepo;
     }
 
-    // ── Class templates ────────────────────────────────────────────────────────
-
     public async Task<IEnumerable<ClassDto>> GetAllClassesAsync()
     {
         var classes = await _classRepo.GetAllAsync();
@@ -52,7 +50,6 @@ public class ClassService : IClassService
     {
         var c = await _classRepo.GetByIdAsync(id)
             ?? throw new KeyNotFoundException($"Class {id} not found.");
-
         c.Name = dto.Name;
         c.Description = dto.Description;
         c.Instructor = dto.Instructor;
@@ -62,19 +59,16 @@ public class ClassService : IClassService
         c.ColorLabel = dto.ColorLabel;
         c.Category = dto.Category;
         c.IsActive = dto.IsActive;
-
         await _classRepo.UpdateAsync(c);
         return MapClassToDto(c);
     }
 
     public async Task DeleteClassAsync(Guid id)
     {
-        var c = await _classRepo.GetByIdAsync(id)
+        _ = await _classRepo.GetByIdAsync(id)
             ?? throw new KeyNotFoundException($"Class {id} not found.");
         await _classRepo.DeleteAsync(id);
     }
-
-    // ── Sessions ───────────────────────────────────────────────────────────────
 
     public async Task<IEnumerable<ClassSessionDto>> GetSessionsAsync(DateTime from, DateTime to)
     {
@@ -92,7 +86,6 @@ public class ClassService : IClassService
     {
         var cls = await _classRepo.GetByIdAsync(dto.ClassId)
             ?? throw new KeyNotFoundException($"Class {dto.ClassId} not found.");
-
         var session = new ClassSession
         {
             ClassId = dto.ClassId,
@@ -110,10 +103,8 @@ public class ClassService : IClassService
     {
         var s = await _sessionRepo.GetByIdWithClassAsync(id)
             ?? throw new KeyNotFoundException($"Session {id} not found.");
-
         s.StartTime = dto.StartTime.ToUniversalTime();
         s.Notes = dto.Notes;
-
         await _sessionRepo.UpdateAsync(s);
         return MapSessionToDto(s);
     }
@@ -122,7 +113,6 @@ public class ClassService : IClassService
     {
         var s = await _sessionRepo.GetByIdWithClassAsync(id)
             ?? throw new KeyNotFoundException($"Session {id} not found.");
-
         s.Status = SessionStatus.Cancelled;
         await _sessionRepo.UpdateAsync(s);
         return MapSessionToDto(s);
@@ -130,12 +120,10 @@ public class ClassService : IClassService
 
     public async Task DeleteSessionAsync(Guid id)
     {
-        var s = await _sessionRepo.GetByIdAsync(id)
+        _ = await _sessionRepo.GetByIdAsync(id)
             ?? throw new KeyNotFoundException($"Session {id} not found.");
         await _sessionRepo.DeleteAsync(id);
     }
-
-    // ── Mapping ────────────────────────────────────────────────────────────────
 
     private static ClassDto MapClassToDto(Class c) => new(
         c.Id, c.Name, c.Description, c.Instructor,
@@ -144,8 +132,7 @@ public class ClassService : IClassService
     );
 
     private static ClassSessionDto MapSessionToDto(ClassSession s) => new(
-        s.Id,
-        s.ClassId,
+        s.Id, s.ClassId,
         s.Class?.Name ?? string.Empty,
         s.Class?.Instructor ?? string.Empty,
         s.Class?.ColorLabel ?? "#f9a8d4",

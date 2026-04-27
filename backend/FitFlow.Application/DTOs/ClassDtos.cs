@@ -1,7 +1,5 @@
 namespace FitFlow.Application.DTOs;
 
-// ── Class template DTOs ────────────────────────────────────────────────────────
-
 public record CreateClassDto(
     string Name,
     string? Description,
@@ -38,8 +36,6 @@ public record ClassDto(
     bool IsActive,
     DateTime CreatedAt
 );
-
-// ── Class session DTOs ─────────────────────────────────────────────────────────
 
 public record CreateSessionDto(
     Guid ClassId,

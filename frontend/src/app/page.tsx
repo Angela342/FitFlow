@@ -597,7 +597,7 @@ function DashboardMockup() {
             <button
               className="flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1 text-[10px] font-medium text-gray-600"
             >
-              <span style={{ color: "#F59E0B" }}>★</span> Today's Classes
+              <span style={{ color: "#F59E0B" }}>★</span> Today&apos;s Classes
             </button>
             <div className="h-7 w-7 overflow-hidden rounded-full bg-gradient-to-br from-purple-300 to-pink-400" />
           </div>
@@ -640,7 +640,7 @@ function DashboardMockup() {
               ))}
 
               {/* Day columns */}
-              {DAYS.map((d, colIdx) => (
+              {DAYS.map((d, _colIdx) => (
                 <div key={d.label} className="relative flex-1" />
               ))}
 

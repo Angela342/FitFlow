@@ -33,8 +33,3 @@ CREATE TABLE IF NOT EXISTS "ClassSessions" (
 
 CREATE INDEX IF NOT EXISTS "IX_ClassSessions_ClassId"   ON "ClassSessions" ("ClassId");
 CREATE INDEX IF NOT EXISTS "IX_ClassSessions_StartTime" ON "ClassSessions" ("StartTime");
-
--- Record the migration in EF history so dotnet ef stays in sync
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20260425190000_AddClasses', '9.0.4')
-ON CONFLICT DO NOTHING;
